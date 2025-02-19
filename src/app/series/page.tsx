@@ -1,115 +1,106 @@
-// src/app/page.tsx
+// app/series/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link"; // Import de Link pour la navigation sans rechargement de page.
+import Link from "next/link";
 import Menu from "@/components/Menu";
-import { SerieCard } from "@/components/Serie-Card"; // Réutilisation du composant MovieCard.
+import { SerieCard } from "@/components/Serie-Card";
 
 export default function Series() {
-    // États pour gérer les séries, les séries filtrées, la requête de recherche, les filtres et la série sélectionnée
-    const [series, setSeries] = useState<any[]>([]); // Liste des séries récupérées de l'API.
-    const [filteredSeries, setFilteredSeries] = useState<any[]>([]); // Liste des séries après les filtres ou recherche.
+    const [series, setSeries] = useState<any[]>([]);
+    const [filteredSeries, setFilteredSeries] = useState<any[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
-        genre: "", // Filtre genre.
-        year: "", // Filtre année de sortie.
-        rating: "", // Filtre note minimale.
-        language: "", // Filtre langue.
+        genre: "",
+        year: "",
+        rating: "",
+        language: "",
     });
-    const [selectedSeries, setSelectedSeries] = useState<any | null>(null); // Stocke la série sélectionnée.
-    const [currentLanguage, setCurrentLanguage] = useState("fr"); // État pour gérer la langue actuelle
+    const [selectedSeries, setSelectedSeries] = useState<any | null>(null);
 
-    // Fonction pour récupérer les séries depuis l'API en fonction des filtres
     const fetchSeries = async (filters: { genre: string; year: string; rating: string; language: string }) => {
-        const baseUrl = "https://api.themoviedb.org/3/discover/tv"; // URL de l'API pour récupérer les séries.
+        const baseUrl = "https://api.themoviedb.org/3/discover/tv";
         const params = new URLSearchParams({
-            language: filters.language || currentLanguage, // Langue des séries
-            sort_by: "popularity.desc", // Trier par popularité décroissante.
-            with_genres: filters.genre, // Filtrage par genre.
-            primary_release_year: filters.year, // Filtrage par année de sortie.
-            "vote_average.gte": filters.rating, // Filtrage par note minimum.
-            "with_original_language": filters.language, // Filtrage par langue originale.
+            language: filters.language || "fr-FR",
+            sort_by: "popularity.desc",
+            with_genres: filters.genre,
+            primary_release_year: filters.year,
+            "vote_average.gte": filters.rating,
+            "with_original_language": filters.language,
         });
 
-        console.log("Params sent to API:", params.toString()); // Log des paramètres envoyés à l'API.
+        console.log("Params sent to API:", params.toString());
 
         const response = await fetch(`${baseUrl}?${params}`, {
             headers: {
-                Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`, // Utilisation de la clé API
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
             },
         });
         const data = await response.json();
-        console.log("Series fetched from API:", data.results); // Log des séries récupérées.
-        setSeries(data.results); // Mise à jour de l'état des séries.
-        setFilteredSeries(data.results); // Initialisation des séries filtrées avec les résultats de l'API.
+        console.log("Series fetched from API:", data.results);
+        setSeries(data.results);
+        setFilteredSeries(data.results);
     };
 
-    // Fonction pour gérer la recherche
     const handleSearch = (query: string) => {
-        setSearchQuery(query); // Mise à jour de l'état de la recherche.
-        filterSeries(query); // Filtrage des séries en fonction de la recherche.
+        setSearchQuery(query);
+        filterSeries(query);
     };
 
-    // Fonction pour réinitialiser les filtres
     const handleResetFilters = () => {
         setFilters({
             genre: "",
             year: "",
             rating: "",
             language: "",
-        }); // Réinitialisation des filtres.
-        setSearchQuery(""); // Réinitialisation de la recherche.
+        });
+        setSearchQuery("");
         fetchSeries({
             genre: "",
             year: "",
             rating: "",
             language: "",
-        }); // Récupération des séries sans filtres.
+        });
     };
 
-    // Fonction pour gérer le changement de filtres
     const handleFilterChange = (filterType: string, value: string) => {
         setFilters((prev) => {
-            const updatedFilters = { ...prev, [filterType]: value }; // Mise à jour du filtre modifié.
-            fetchSeries(updatedFilters); // Récupération des séries avec les nouveaux filtres.
+            const updatedFilters = { ...prev, [filterType]: value };
+            fetchSeries(updatedFilters);
             return updatedFilters;
         });
     };
 
-    // Fonction pour filtrer les séries en fonction de la requête de recherche
+    const handleLanguageChange = (lang: string) => {
+        setFilters((prev) => ({ ...prev, language: lang }));
+        fetchSeries({ ...filters, language: lang });
+    };
+
     const filterSeries = (query: string) => {
         let filtered = series;
 
         if (query) {
             filtered = filtered.filter((series) =>
-                series.name.toLowerCase().includes(query.toLowerCase()) // Recherche par nom de série
+                series.name.toLowerCase().includes(query.toLowerCase())
             );
         }
 
-        console.log("Filtered series:", filtered); // Log des séries filtrées.
-        setFilteredSeries(filtered); // Mise à jour de l'état des séries filtrées.
+        console.log("Filtered series:", filtered);
+        setFilteredSeries(filtered);
     };
 
-    // Fonction pour gérer le changement de langue
-    const handleLanguageChange = (lang: string) => {
-        setCurrentLanguage(lang);
-        fetchSeries({ ...filters, language: lang }); // Récupérer les séries dans la nouvelle langue
-    };
-
-    // Récupérer les séries au chargement initial du composant
     useEffect(() => {
         fetchSeries(filters);
-    }, []); // Exécution une seule fois au montage du composant.
+    }, []);
 
     return (
         <div className="flex min-h-screen bg-gray-900 text-white">
             <Menu
-                onSearch={handleSearch} // Fonction appelée lors d'une recherche.
-                onResetFilters={handleResetFilters} // Fonction appelée pour réinitialiser les filtres.
-                onFilterChange={handleFilterChange} // Fonction appelée lors d'un changement de filtre.
-                filters={filters} // Passage des filtres actuels au composant Menu.
-                onChangeLanguage={handleLanguageChange} // Fonction appelée lors d'un changement de langue.
+                onSearch={handleSearch}
+                onResetFilters={handleResetFilters}
+                onFilterChange={handleFilterChange}
+                filters={filters}
+                onChangeLanguage={handleLanguageChange} // This line is correct
             />
             <main className="ml-64 p-6 w-full">
                 <h1 className="text-4xl font-extrabold text-center mb-8">Séries Populaires</h1>
@@ -117,7 +108,6 @@ export default function Series() {
                     {filteredSeries.map((serie) => (
                         <Link key={serie.id} href={`/series/${serie.id}`} className="block">
                             <SerieCard serie={serie} onClick={() => setSelectedSeries(serie)} />
-                            {/* Affichage des cartes de séries et mise à jour de la série sélectionnée */}
                         </Link>
                     ))}
                 </div>

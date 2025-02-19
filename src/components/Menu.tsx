@@ -1,5 +1,5 @@
 // src/components/Menu.tsx
-"use client"; // Assurez-vous que ce fichier s'exécute côté client
+"use client";
 
 import React from "react";
 import { GenreFilter } from "./GenreFilter";
@@ -13,17 +13,26 @@ import { Header } from "./header";
 import { FilmButton } from "./FilmButton";
 import { SeriesButton } from "./SeriesButton";
 
-export default function Menu({
+interface MenuProps {
+    onSearch: (query: string) => void;
+    onResetFilters: () => void;
+    onFilterChange: (filterType: string, value: string) => void;
+    filters: {
+        genre: string;
+        year: string;
+        rating: string;
+        language: string;
+    };
+    onChangeLanguage: (lang: string) => void; // Ajoutez cette ligne
+}
+
+const Menu: React.FC<MenuProps> = ({
     onSearch,
     onResetFilters,
     onFilterChange,
     filters,
-}: {
-    onSearch: (query: string) => void;
-    onResetFilters: () => void;
-    onFilterChange: (filterType: string, value: string) => void;
-    filters: { genre: string; year: string; rating: string; language: string };
-}) {
+    onChangeLanguage,
+}) => {
     return (
         <aside className="w-64 bg-gray-800 p-6 space-y-4 fixed h-full shadow-lg rounded-r-lg">
             <Header />
@@ -31,14 +40,15 @@ export default function Menu({
             <GenreFilter onFilterChange={onFilterChange} selectedGenre={filters.genre} />
             <YearFilter onFilterChange={onFilterChange} selectedYear={filters.year} />
             <RatingFilter onFilterChange={onFilterChange} selectedRating={filters.rating} />
-            <LanguageFilter onFilterChange={onFilterChange} selectedLanguage={filters.language} />
+            <LanguageFilter onFilterChange={onChangeLanguage} selectedLanguage={filters.language} />
             <ResetFiltersButton onResetFilters={onResetFilters} />
             <FavoritesLink />
-            {/* Boutons de navigation Films et Séries */}
             <div className="space-y-4">
                 <FilmButton />
                 <SeriesButton />
             </div>
         </aside>
     );
-}
+};
+
+export default Menu;
