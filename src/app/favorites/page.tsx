@@ -8,7 +8,6 @@ export default function Favorites() {
     const [favorites, setFavorites] = useState<any[]>([]);
     const [seriesFavorites, setSeriesFavorites] = useState<any[]>([]);
 
-    // Charger les favoris au montage du composant
     useEffect(() => {
         const storedFavorites = localStorage.getItem("favorites");
         if (storedFavorites) {
@@ -21,23 +20,20 @@ export default function Favorites() {
         }
     }, []);
 
-    // Fonction pour supprimer un film des favoris
     const removeFromFavorites = (movie: any) => {
         const updatedFavorites = favorites.filter((fav) => fav.id !== movie.id);
-        setFavorites(updatedFavorites); // Met à jour l'affichage
-        localStorage.setItem("favorites", JSON.stringify(updatedFavorites)); // Sauvegarde dans localStorage
+        setFavorites(updatedFavorites);
+        localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
     };
 
-    // Fonction pour supprimer une série des favoris
     const removeSeriesFromFavorites = (serie: any) => {
         const updatedSeriesFavorites = seriesFavorites.filter((fav) => fav.id !== serie.id);
-        setSeriesFavorites(updatedSeriesFavorites); // Met à jour l'affichage
-        localStorage.setItem("seriesFavorites", JSON.stringify(updatedSeriesFavorites)); // Sauvegarde dans localStorage
+        setSeriesFavorites(updatedSeriesFavorites);
+        localStorage.setItem("seriesFavorites", JSON.stringify(updatedSeriesFavorites));
     };
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
-            {/* Barre supérieure avec le titre et le bouton de retour */}
             <header className="flex justify-between items-center bg-gray-800 p-6 shadow-md">
                 <h1 className="text-3xl font-bold text-white">🎬 CinéFlix</h1>
                 <Link href="/" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-semibold">
@@ -66,10 +62,9 @@ export default function Favorites() {
                                         </div>
                                     </div>
                                 </Link>
-                                {/* Bouton pour retirer des favoris */}
                                 <button
                                     onClick={(e) => {
-                                        e.preventDefault(); // Empêche l'effet de rafraîchissement
+                                        e.preventDefault();
                                         removeFromFavorites(movie);
                                     }}
                                     className="block text-center mt-2 bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-white font-semibold w-full"

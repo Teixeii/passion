@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link"; // Import de Link pour la navigation sans rechargement de page.
 import Menu from "@/components/Menu";
-import { MovieCard } from "@/components/movie-card";
+import { Card } from "@/components/card/entitycard";
+
 
 export default function Home() {
     // États pour gérer les films, les films filtrés, la requête de recherche, les filtres et le film sélectionné
@@ -16,7 +17,6 @@ export default function Home() {
         rating: "", // Filtre note minimale.
         language: "", // Filtre langue.
     });
-    const [selectedMovie, setSelectedMovie] = useState<any | null>(null); // Stocke le film sélectionné.
 
     // Fonction pour récupérer les films depuis l'API en fonction des filtres
     const fetchMovies = async (filters: { genre: string; year: string; rating: string; language: string }) => {
@@ -109,12 +109,14 @@ export default function Home() {
                 onChangeLanguage={handleLanguageChange} // Fonction appelée lors d'un changement de langue.
                 filters={filters} // Passage des filtres actuels au composant Menu.
             />
-            <main className="ml-64 p-6 w-full">
+            <main className="md:ml-64 p-6 w-full">
                 <h1 className="text-4xl font-extrabold text-center mb-8">Films Populaires</h1>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredMovies.map((movie) => (
                         <Link key={movie.id} href={`/movie/${movie.id}`} className="block">
-                            <MovieCard movie={movie} onClick={() => setSelectedMovie(movie)} />
+                            <Card id={movie.id} title={movie.title} release_date={movie.release_date} vote_average={movie.vote_average} poster_path={movie.poster_path} />
+
+
                             {/* Affichage des cartes de films et mise à jour du film sélectionné */}
                         </Link>
                     ))}

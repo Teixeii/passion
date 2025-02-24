@@ -10,8 +10,7 @@ import { SearchBar } from "./SearchBar";
 import { ResetFiltersButton } from "./ResetFiltersButton";
 import { FavoritesLink } from "./FavoritesLink";
 import { Header } from "./header";
-import { FilmButton } from "./FilmButton";
-import { SeriesButton } from "./SeriesButton";
+import { NavigationButton } from "./button/navigation-button";
 
 interface MenuProps {
     onSearch: (query: string) => void;
@@ -27,14 +26,14 @@ interface MenuProps {
 }
 
 const Menu: React.FC<MenuProps> = ({
-    onSearch,
-    onResetFilters,
-    onFilterChange,
-    filters,
-    onChangeLanguage,
-}) => {
+                                       onSearch,
+                                       onResetFilters,
+                                       onFilterChange,
+                                       filters,
+                                       onChangeLanguage,
+                                   }) => {
     return (
-        <aside className="w-64 bg-gray-800 p-6 space-y-4 fixed h-full shadow-lg rounded-r-lg">
+        <aside className="w-64 bg-gray-800 p-6 space-y-4 fixed h-full shadow-lg rounded-r-lg hidden md:block">
             <Header />
             <SearchBar onSearch={onSearch} />
             <GenreFilter onFilterChange={onFilterChange} selectedGenre={filters.genre} />
@@ -44,8 +43,8 @@ const Menu: React.FC<MenuProps> = ({
             <ResetFiltersButton onResetFilters={onResetFilters} />
             <FavoritesLink />
             <div className="space-y-4">
-                <FilmButton />
-                <SeriesButton />
+                <NavigationButton label="Films" route="/" />
+                <NavigationButton label="Séries" route="/series" />
             </div>
         </aside>
     );

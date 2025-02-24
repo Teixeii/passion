@@ -4,7 +4,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Menu from "@/components/Menu";
-import { SerieCard } from "@/components/Serie-Card";
+import { Card } from "@/components/card/entitycard";
+
 
 export default function Series() {
     const [series, setSeries] = useState<any[]>([]);
@@ -100,14 +101,15 @@ export default function Series() {
                 onResetFilters={handleResetFilters}
                 onFilterChange={handleFilterChange}
                 filters={filters}
-                onChangeLanguage={handleLanguageChange} // This line is correct
+                onChangeLanguage={handleLanguageChange}
             />
-            <main className="ml-64 p-6 w-full">
+            <main className="md:ml-64 p-6 w-full">
                 <h1 className="text-4xl font-extrabold text-center mb-8">Séries Populaires</h1>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredSeries.map((serie) => (
                         <Link key={serie.id} href={`/series/${serie.id}`} className="block">
-                            <SerieCard serie={serie} onClick={() => setSelectedSeries(serie)} />
+                            <Card id={serie.id} title={serie.name} release_date={serie.first_air_date} vote_average={serie.vote_average} poster_path={serie.poster_path} />
+
                         </Link>
                     ))}
                 </div>

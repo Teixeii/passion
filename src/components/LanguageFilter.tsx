@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 
-export function LanguageFilter({ 
-    onFilterChange, // Fonction pour mettre à jour le filtre dans le composant parent.
-    selectedLanguage // Langue actuellement sélectionnée.
-}: { 
+export function LanguageFilter({
+                                   onFilterChange, // Fonction pour mettre à jour le filtre dans le composant parent.
+                                   selectedLanguage // Langue actuellement sélectionnée.
+                               }: {
     onFilterChange: (filterType: string, value: string) => void; // Type de la fonction de filtrage.
     selectedLanguage: string; // Type de la langue sélectionnée.
 }) {
@@ -14,18 +14,18 @@ export function LanguageFilter({
     useEffect(() => {
         const fetchLanguages = async () => {
             try {
-                // Requête pour récupérer les films 
+                // Requête pour récupérer les films
                 const response = await fetch("https://api.themoviedb.org/3/movie/popular?language=fr-FR", {
                     headers: {
-                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`, // Utilisation de la clé API 
+                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`, // Utilisation de la clé API
                     },
                 });
                 const data = await response.json();
 
-                // Extraction des langues originales 
+                // Extraction des langues originales
                 const uniqueLanguages = [...new Set(data.results.map((movie: any) => movie.original_language))];
 
-                // Requête pour récupérer la liste complète des langues 
+                // Requête pour récupérer la liste complète des langues
                 const languageNamesResponse = await fetch("https://api.themoviedb.org/3/configuration/languages", {
                     headers: {
                         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
@@ -54,10 +54,10 @@ export function LanguageFilter({
             value={selectedLanguage} // Définir la valeur sélectionnée.
             onChange={(e) => onFilterChange("language", e.target.value)} // Appeler la fonction de filtrage avec la langue choisie.
         >
-            <option value="">Toutes les langues</option> {}
+            <option value="">Toutes les langues</option>
             {languages.map((lang) => (
                 <option key={lang.iso_639_1} value={lang.iso_639_1}>
-                    {lang.name} {}
+                    {lang.name}
                 </option>
             ))}
         </select>
